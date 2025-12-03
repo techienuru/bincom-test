@@ -1,18 +1,17 @@
-name: 🚀 Deploy PHP to InfinityFree
+name: 🚀 Deploy PHP Site to InfinityFree
 
 on:
   push:
-    branches:
-      - master # or whichever branch you want to deploy from
+    branches: [master] # or your default branch
 
 jobs:
   ftp-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Deploy via FTP
+      - name: FTP Deploy to InfinityFree
         uses: SamKirkland/FTP-Deploy-Action@v4
         with:
           server: ${{ secrets.FTP_HOST }}
