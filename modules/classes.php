@@ -33,15 +33,27 @@ class bincom_test
         }
     }
 
-    public function get_result_by_lga($lga_id)
+    public function get_pu_result_by_lga($lga_id)
     {
-        // Retrieve all polling unit for the given LGA ID
-        $polling_units = $this->get_polling_unit_by_lga($lga_id);
-        if (is_string($polling_units)) {
-            return $polling_units; // Return error message if no polling units found
-        }
+        $sql = $this->connect->query("SELECT * FROM `announced_pu_results` INNER JOIN polling_unit ON polling_unit_uniqueid = polling_unit.uniqueid INNER JOIN lga ON polling_unit.lga_id = lga.uniqueid WHERE polling_unit.lga_id = $lga_id");
 
-        $sql = $this->connect->query("SELECT * FROM `polling_unit` WHERE `lga_id` = $lga_id");
-        return $sql;
+        // Check if result exist
+        if ($sql && $sql->num_rows) {
+            return $sql->fetch_all(MYSQLI_ASSOC);
+        } else {
+            return "No polling unit result for selected LGA";
+        }
+    }
+
+    public function get_pu_sum_by_lga($lga_id)
+    {
+        $sql = $this->connect->query("SELECT SUM(announced_pu_results.party_score) AS sum_total FROM `announced_pu_results` INNER JOIN polling_unit ON polling_unit_uniqueid = polling_unit.uniqueid  WHERE polling_unit.lga_id = $lga_id");
+
+        // Check if result exist
+        if ($sql && $sql->num_rows) {
+            return number_format($sql->fetch_assoc()["sum_total"], 0, ",");
+        } else {
+            return "No polling unit result for selected LGA";
+        }
     }
 }
