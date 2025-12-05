@@ -57,31 +57,6 @@ class bincom_test
         }
     }
 
-    public function get_lga_by_state($state_id)
-    {
-        if (!$state_id) return "Please select a State";
-
-        $sql = $this->connect->query("");
-
-        if ($sql && $sql->num_rows) {
-            return $sql->fetch_all(MYSQLI_ASSOC);
-        } else {
-            return "No LGA found for selected state";
-        }
-    }
-
-    public function get_ward_by_lga($lga_id)
-    {
-        if (!$lga_id) return "Please select a LGA";
-
-        $sql = $this->connect->query("SELECT * FROM `ward` WHERE `lga_id` = $lga_id");
-
-        if ($sql && $sql->num_rows) {
-            return $sql->fetch_all(MYSQLI_ASSOC);
-        } else {
-            return "No ward found for selected LGA";
-        }
-    }
 
     public function get_p_u_by_ward($ward_id)
     {
@@ -93,17 +68,6 @@ class bincom_test
             return $sql->fetch_all(MYSQLI_ASSOC);
         } else {
             return "No polling unit found for selected ward";
-        }
-    }
-
-    public function get_parties()
-    {
-        $sql = $this->connect->query("SELECT * FROM `party`");
-
-        if ($sql && $sql->num_rows) {
-            return $sql->fetch_all(MYSQLI_ASSOC);
-        } else {
-            return "No party record found";
         }
     }
 }

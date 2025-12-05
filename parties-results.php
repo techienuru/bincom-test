@@ -51,25 +51,28 @@ if (isset($_GET["submit"])) {
                 <div>
                     <label for="lga">LGA: </label>
                     <select name="lga_id" id="lga" required>
+                        <option value=''>Please select a state</option>
                         <!-- Appeard dynamically from JS -->
                     </select>
                 </div>
                 <div>
                     <label for="ward">WARD: </label>
                     <select name="ward_id" id="ward" required>
+                        <option value=''>Please select a LGA</option>
                         <!-- Appeard dynamically from JS -->
                     </select>
                 </div>
                 <div>
                     <label for="pu">POLLING UNIT: </label>
                     <select name="p_u_id" id="pu" required>
-
+                        <option value=''>Please select a ward</option>
+                        <!-- Appeard dynamically from JS -->
                     </select>
                 </div>
                 <div>
                     <label for="party">PARTY: </label>
-                    <select name="party" id="pu" required>
-
+                    <select name="party" id="party" required>
+                        <!-- Appeard dynamically from JS -->
                     </select>
                 </div>
 
@@ -80,7 +83,7 @@ if (isset($_GET["submit"])) {
 
                 <div>
                     <label for="entered-by">ENTERED BY: </label>
-                    <input type="text" name="entered_by" id="entered-by" required>
+                    <input type="text" name="entered_by" id="entered-by" placeholder="Enter your name..." required>
                 </div>
 
                 <div>
