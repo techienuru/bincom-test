@@ -1,5 +1,5 @@
 <?php
-include_once "./include/connect.php";
+include_once "./includes/connect.php";
 include_once "./modules/classes.php";
 
 $object = new bincom_test($connect);
@@ -9,7 +9,23 @@ $selected_ward = isset($_GET["ward_id"]) ? $_GET["ward_id"] : null;
 $selected_p_u = isset($_GET["p_u_id"]) ? $_GET["p_u_id"] : null;
 
 if (isset($_GET["submit"])) {
-    # code...
+    $state_id = trim($_GET["state_id"]);
+    $lga_id = trim($_GET["lga_id"]);
+    $ward_id = trim($_GET["ward_id"]);
+    $p_u_id = trim($_GET["p_u_id"]);
+    $p_u_id = trim($_GET["p_u_id"]);
+    $party = trim($_GET["party"]);
+    $party_score = trim($_GET["party_score"]);
+    $entered_by = trim($_GET["entered_by"]);
+
+    date_default_timezone_set("AFRICA/LAGOS");
+    $strtotime = strtotime("now");
+    $curr_date = date("Y-m-d h:i:s", $strtotime);
+
+    $user_ip = $_SERVER["REMOTE_ADDR"];
+
+    $sql = "INSERT INTO `announced_pu_results`(`polling_unit_uniqueid`, `party_abbreviation`, `party_score`, `entered_by_user`, `date_entered`, `user_ip_address`) VALUES ('$p_u_id','$party',$party_score,'$entered_by','$curr_date','$user_ip')";
+    // $query = $connect->query($sql);
 }
 ?>
 <!DOCTYPE html>
@@ -29,104 +45,42 @@ if (isset($_GET["submit"])) {
             <form action="<?php echo htmlspecialchars($_SERVER["REQUEST_URI"]) ?>" method="get">
                 <div>
                     <label for="state">STATE: </label>
-                    <select name="state_id" id="state" required onchange="this.form.submit()">
-                        <option value="">--- Select State ---</option>
-                        <?php $states = $object->get_states();
-                        if (is_string($states)) {
-                        ?>
-                            <option value=""><?php echo $states ?></option>
-                        <?php } else if (is_array($states)) { ?>
-                            <?php foreach ($states as $key => $value) {
-                            ?>
-                                <option value="<?php echo $states[$key]["state_id"] ?>" <?php echo $selected_state === $states[$key]["state_id"] ? "selected" : "" ?>>
-                                    <?php echo $states[$key]["state_name"]; ?>
-                                </option>
-                            <?php } ?>
-
-                        <?php } ?>
+                    <select name="state_id" id="state" required>
                     </select>
                 </div>
                 <div>
                     <label for="lga">LGA: </label>
-                    <select name="lga_id" id="lga" required onchange="this.form.submit()">
-                        <option value="">--- Select LGA ---</option>
-                        <?php $lga = $object->get_lga_by_state($selected_state);
-                        if (is_string($lga)) {
-                        ?>
-                            <option value=""><?php echo $lga ?></option>
-                        <?php } else if (is_array($lga)) { ?>
-                            <?php foreach ($lga as $key => $value) {
-                            ?>
-                                <option value="<?php echo $lga[$key]["uniqueid"] ?>" <?php echo $selected_lga === $lga[$key]["uniqueid"] ? "selected" : "" ?>>
-                                    <?php echo $lga[$key]["lga_name"] ?>
-                                </option>
-                            <?php } ?>
-
-                        <?php } ?>
+                    <select name="lga_id" id="lga" required>
+                        <!-- Appeard dynamically from JS -->
                     </select>
                 </div>
                 <div>
                     <label for="ward">WARD: </label>
-                    <select name="ward_id" id="ward" required onchange="this.form.submit()">
-                        <option value="">--- Select Ward ---</option>
-                        <?php $ward = $object->get_ward_by_lga($selected_lga);
-                        if (is_string($ward)) {
-                        ?>
-                            <option value=""><?php echo $ward ?></option>
-                        <?php } else if (is_array($ward)) { ?>
-                            <?php foreach ($ward as $key => $value) {
-                            ?>
-                                <option value="<?php echo $ward[$key]["uniqueid"] ?>" <?php echo $selected_ward === $ward[$key]["uniqueid"] ? "selected" : "" ?>>
-                                    <?php echo $ward[$key]["ward_name"]; ?>
-                                </option>
-                            <?php } ?>
-
-                        <?php } ?>
+                    <select name="ward_id" id="ward" required>
+                        <!-- Appeard dynamically from JS -->
                     </select>
                 </div>
                 <div>
                     <label for="pu">POLLING UNIT: </label>
                     <select name="p_u_id" id="pu" required>
-                        <option value="">--- Select Polling Unit ---</option>
-                        <?php $p_u = $object->get_p_u_by_ward($selected_ward);
-                        if (is_string($p_u)) {
-                        ?>
-                            <option value=""><?php echo $p_u ?></option>
-                        <?php } else if (is_array($p_u)) { ?>
-                            <?php foreach ($p_u as $key => $value) {
-                            ?>
-                                <option value="<?php echo $p_u[$key]["uniqueid"] ?>" <?php echo $selected_ward === $p_u[$key]["uniqueid"] ? "selected" : "" ?>>
-                                    <?php echo $p_u[$key]["polling_unit_name"]; ?>
-                                </option>
-                            <?php } ?>
 
-                        <?php } ?>
                     </select>
                 </div>
                 <div>
                     <label for="party">PARTY: </label>
-                    <select name="p_u_id" id="pu" required>
-                        <option value="">--- Select Party ---</option>
-                        <?php $parties = $object->get_parties();
-                        if (is_string($parties)) {
-                        ?>
-                            <p><?php echo $parties ?></p>
-                        <?php } else if (is_array($parties)) { ?>
-                            <?php foreach ($parties as $key => $value) {
-                            ?>
-                                <option id="party" name="party" readonly value="<?php echo $parties[$key]["id"] ?>" required>
-                                    <?php echo $parties[$key]["partyname"] ?>
-                                </option>
-                            <?php } ?>
-
-                        <?php } ?>
+                    <select name="party" id="pu" required>
 
                     </select>
                 </div>
 
                 <div>
                     <label for="party-score">PARTY SCORE: </label>
-                    <input type="number" name="party_score" id="party-score">
+                    <input type="number" name="party_score" id="party-score" required>
+                </div>
+
+                <div>
+                    <label for="entered-by">ENTERED BY: </label>
+                    <input type="text" name="entered_by" id="entered-by" required>
                 </div>
 
                 <div>
@@ -135,7 +89,7 @@ if (isset($_GET["submit"])) {
             </form>
         </section>
     </main>
-
+    <script src="./js/partiesResults.js"></script>
 </body>
 
 </html>

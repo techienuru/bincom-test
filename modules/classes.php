@@ -57,23 +57,11 @@ class bincom_test
         }
     }
 
-    public function get_states()
-    {
-        $sql = $this->connect->query("SELECT * FROM `states`");
-
-        // Check if result exist
-        if ($sql && $sql->num_rows) {
-            return $sql->fetch_all(MYSQLI_ASSOC);
-        } else {
-            return "No state record found";
-        }
-    }
-
     public function get_lga_by_state($state_id)
     {
         if (!$state_id) return "Please select a State";
 
-        $sql = $this->connect->query("SELECT * FROM `lga` WHERE `state_id` = $state_id");
+        $sql = $this->connect->query("");
 
         if ($sql && $sql->num_rows) {
             return $sql->fetch_all(MYSQLI_ASSOC);
