@@ -3,29 +3,43 @@ include_once "./includes/connect.php";
 include_once "./modules/classes.php";
 
 $object = new bincom_test($connect);
-$selected_state = isset($_GET["state_id"]) ? $_GET["state_id"] : null;
-$selected_lga = isset($_GET["lga_id"]) ? $_GET["lga_id"] : null;
-$selected_ward = isset($_GET["ward_id"]) ? $_GET["ward_id"] : null;
-$selected_p_u = isset($_GET["p_u_id"]) ? $_GET["p_u_id"] : null;
+$selected_state = isset($_POST["state_id"]) ? $_POST["state_id"] : null;
+$selected_lga = isset($_POST["lga_id"]) ? $_POST["lga_id"] : null;
+$selected_ward = isset($_POST["ward_id"]) ? $_POST["ward_id"] : null;
+$selected_p_u = isset($_POST["p_u_id"]) ? $_POST["p_u_id"] : null;
 
-if (isset($_GET["submit"])) {
-    $state_id = trim($_GET["state_id"]);
-    $lga_id = trim($_GET["lga_id"]);
-    $ward_id = trim($_GET["ward_id"]);
-    $p_u_id = trim($_GET["p_u_id"]);
-    $p_u_id = trim($_GET["p_u_id"]);
-    $party = trim($_GET["party"]);
-    $party_score = trim($_GET["party_score"]);
-    $entered_by = trim($_GET["entered_by"]);
+if (isset($_POST["submit"])) {
 
-    date_default_timezone_set("AFRICA/LAGOS");
-    $strtotime = strtotime("now");
-    $curr_date = date("Y-m-d h:i:s", $strtotime);
+    try {
+        $state_id = trim($_POST["state_id"]);
+        $lga_id = trim($_POST["lga_id"]);
+        $ward_id = trim($_POST["ward_id"]);
+        $p_u_id = trim($_POST["p_u_id"]);
+        $p_u_id = trim($_POST["p_u_id"]);
+        $party = trim($_POST["party"]);
+        $party_score = (int) trim($_POST["party_score"]);
+        $entered_by = trim($_POST["entered_by"]);
 
-    $user_ip = $_SERVER["REMOTE_ADDR"];
+        date_default_timezone_set("AFRICA/LAGOS");
+        $strtotime = strtotime("now");
+        $curr_date = date("Y-m-d h:i:s", $strtotime);
 
-    $sql = "INSERT INTO `announced_pu_results`(`polling_unit_uniqueid`, `party_abbreviation`, `party_score`, `entered_by_user`, `date_entered`, `user_ip_address`) VALUES ('$p_u_id','$party',$party_score,'$entered_by','$curr_date','$user_ip')";
-    // $query = $connect->query($sql);
+        $user_ip = $_SERVER["REMOTE_ADDR"];
+
+        $sql = "INSERT INTO `announced_pu_results`(`polling_unit_uniqueid`, `party_abbreviation`, `party_score`, `entered_by_user`, `date_entered`, `user_ip_address`) VALUES (?,?,?,?,?,?)";
+        $stmt = $connect->prepare($sql);
+        $stmt->bind_param("sisss", $p_u_id, $party, $party_score, $entered_by, $curr_date, $user_ip);
+        $result = $stmt->execute();
+
+        if (!$result) throw new Error($stmt->error);
+
+        echo "<script>alert('Success');</script>";
+
+        $stmt->close();
+    } catch (Exception $e) {
+        // Validation or other application exceptions
+        echo 'alert(`<script>' . $e->getMessage() . '</script>`)';
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -170,7 +184,7 @@ if (isset($_GET["submit"])) {
         <section>
             <a href="./index.php">Back to home</a>
             <h1>Select Polling Unit & Enter Parties Results</h1>
-            <form action="<?php echo htmlspecialchars($_SERVER["REQUEST_URI"]) ?>" method="get">
+            <form action="<?php echo htmlspecialchars($_SERVER["REQUEST_URI"]) ?>" method="post">
                 <div>
                     <label for="state">STATE: </label>
                     <select name="state_id" id="state" required>
